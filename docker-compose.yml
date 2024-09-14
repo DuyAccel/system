@@ -1,0 +1,42 @@
+services:
+  portfolio:
+    image: duyaccel/personal-web:latest
+    container_name: 'portfolio'
+    restart: unless-stopped
+    networks:
+      - portfolio-net
+
+  jenkins:
+    image: jenkins/jenkins:2.462.2-jdk17
+    container_name: 'jenkins'
+    volumes:
+      - ./jenkins:/var/jenkins_home
+    restart: unless-stopped
+    networks:
+      - jenkins-net
+
+  reverse-proxy:
+    build:
+      context: ./nginx
+    container_name: 'reverse-proxy'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: unless-stopped
+    networks:
+      - portfolio-net
+      - jenkins-net
+    depends_on:
+      - portfolio
+      - jenkins
+
+networks:
+  portfolio-net:
+    name: portfolio-network
+    driver: bridge
+  
+  jenkins-net:
+    name: jenkins-network
+    driver: bridge
