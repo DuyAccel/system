@@ -1,9 +1,8 @@
 #!/bin/sh
-cd my-server &&
 
 docker compose up -d --build &&
 
-docker exec rerverse-proxy sh -c '
+docker exec reverse-proxy sh -c '
   apk add certbot-nginx
   certbot \
           --nginx -m nguyenchauhieuduy@outlook.com \
